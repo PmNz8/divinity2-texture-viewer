@@ -86,3 +86,20 @@ The matching source archive is `TextureViewer-0.1.0-source.zip`, supplied
 alongside the runtime candidate. It includes tests and `BUILD.md`; tests are
 not included in the runtime ZIP. `BUILD_INFO.json` identifies the source commit
 used for the executable; compare it with source `SOURCE_REVISION`.
+
+### Licensing of exported content
+
+This tool's own code is licensed under GNU AGPLv3 (`AGPL-3.0-only`). Merely using
+the tool to create, modify, or export content does not automatically place that
+content under the AGPLv3.
+
+This clarification does not override licenses already applicable to the content
+or to any tool code incorporated into it.
+
+Content derived from Divinity II game assets remains subject to the rights of
+the respective copyright holders. This tool does not grant permission to
+redistribute those assets.
+
+Mod authors may license their own original contributions only to the extent
+that they hold the necessary rights, without overriding rights in underlying
+game assets.
