@@ -264,7 +264,10 @@ def _build_environment() -> dict[str, str]:
     environment = os.environ.copy()
     for name in ("PYTHONPATH", "PYTHONHOME", "TCL_LIBRARY", "TK_LIBRARY", "TCLLIBPATH"):
         environment.pop(name, None)
-    windows = Path(environment["SystemRoot"])
+    windows_root = environment.get("SYSTEMROOT") or environment.get("SystemRoot")
+    if not windows_root:
+        raise BuildError("Windows SystemRoot is unavailable")
+    windows = Path(windows_root)
     environment["PATH"] = os.pathsep.join(map(str, (
         Path(sys.executable).parent, Path(sys.base_prefix),
         Path(sys.base_prefix) / "DLLs", windows / "System32", windows,

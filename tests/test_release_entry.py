@@ -170,8 +170,8 @@ class ReleaseEntryTests(unittest.TestCase):
             dict(build_script.PINNED_BUILD_PACKAGES),
         )
         command = build_script._pyinstaller_command(context, Path("C:/work/version-file.txt"))
-        self.assertEqual(command[:8], [
-            sys.executable, "-m", "PyInstaller", "--noconfirm", "--onedir", "--windowed", "--name", "TextureViewer"
+        self.assertEqual(command[:9], [
+            sys.executable, "-m", "PyInstaller", "--noconfirm", "--onedir", "--windowed", "--noupx", "--name", "TextureViewer"
         ])
         self.assertIn("--icon", command)
         self.assertIn("NONE", command)
