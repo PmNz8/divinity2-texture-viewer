@@ -28,6 +28,9 @@ license notices, build identity and file manifest. Archive this entire folder,
 not just its executable. No tests, test data or test runner are included.
 PyInstaller's standard Tcl/Tk hook supplies the matching Tcl/Tk data; do not
 manually remove DLLs or compatibility files from its output.
+The builder sanitizes the child process's PATH and Python/Tcl environment so
+unrelated development runtimes cannot supply DLLs. UPX is disabled. Audit the
+actual native-file origins as well as the Python dependency lock.
 
 The build is windowed. Headless validation uses:
 

@@ -15,10 +15,12 @@ runtime conditions do not impose Windows-only terms on the application source.
 | libffi | 3.4.4 via CPython, where collected | MIT-style terms included in `Python-3.12.6.txt` |
 | bzip2/libbzip2 | 1.0.8 via CPython `_bz2` | bzip2 terms included in `Python-3.12.6.txt` |
 | XZ Utils liblzma | 5.2.5 via CPython `_lzma` | Public-domain library/permissive fallback grant, `XZ-5.2.5.txt`; XZ command-line programs/build tools are not bundled |
+| Expat | 2.6.3 via CPython `pyexpat` | MIT-style terms, `Expat-2.6.3.txt` |
+| libmpdec | 2.5.1 via CPython `_decimal` | BSD-2-Clause terms in `Python-incorporated-notices.txt` |
 | PyInstaller bootloader/loader | 6.22.2 | GPL-2.0-or-later with Bootloader-exception; generated combinations permitted, `PyInstaller-6.22.2.txt` |
 | PyInstaller runtime hooks | 6.22.2 | Apache-2.0, included in the same PyInstaller notice |
 
-Python's license file also preserves notices for other incorporated code;
+Python's license and incorporated-notices files also preserve notices for other code;
 including those notices is not a claim that every optional Python module is
 bundled. Exact runtime files and hashes are in `MANIFEST.json`; Python module
 closure is audited separately during candidate preparation. Tcl/Tk data files

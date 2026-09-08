@@ -14,6 +14,7 @@ from dataclasses import dataclass
 import hashlib
 import importlib.metadata as importlib_metadata
 import json
+import os
 from pathlib import Path
 import platform
 import re
@@ -259,6 +260,18 @@ def _write_bundle_metadata(context: BuildContext, bundle: Path) -> None:
     )
 
 
+def _build_environment() -> dict[str, str]:
+    environment = os.environ.copy()
+    for name in ("PYTHONPATH", "PYTHONHOME", "TCL_LIBRARY", "TK_LIBRARY", "TCLLIBPATH"):
+        environment.pop(name, None)
+    windows = Path(environment["SystemRoot"])
+    environment["PATH"] = os.pathsep.join(map(str, (
+        Path(sys.executable).parent, Path(sys.base_prefix),
+        Path(sys.base_prefix) / "DLLs", windows / "System32", windows,
+    )))
+    return environment
+
+
 def build_release(root: Path, output: Path, workdir: Path) -> Path:
     _validate_runtime()
     output = _require_new_absolute_directory(output, "output", base_dir=root)
@@ -275,7 +288,9 @@ def build_release(root: Path, output: Path, workdir: Path) -> Path:
     version_file = workdir / "version-file.txt"
     version_file.write_text(_version_file_text(), encoding="utf-8", newline="\n")
     context = BuildContext(root, output, workdir, source_revision, packages)
-    completed = subprocess.run(_pyinstaller_command(context, version_file), cwd=root, check=False)
+    completed = subprocess.run(
+        _pyinstaller_command(context, version_file), cwd=root, env=_build_environment(), check=False
+    )
     if completed.returncode != 0:
         raise BuildError(f"PyInstaller failed with exit code {completed.returncode}")
     bundle = output / "TextureViewer"

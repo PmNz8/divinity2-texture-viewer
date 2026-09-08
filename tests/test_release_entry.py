@@ -20,6 +20,17 @@ from texture_viewer.version import APP_NAME, COPYRIGHT, LICENSE_NAME, PROFILE_UR
 
 
 class ReleaseEntryTests(unittest.TestCase):
+    def test_build_environment_excludes_ambient_runtime_paths(self) -> None:
+        contamination = {name: "unrelated-runtime" for name in (
+            "PATH", "PYTHONPATH", "PYTHONHOME", "TCL_LIBRARY", "TK_LIBRARY", "TCLLIBPATH"
+        )}
+        with mock.patch.dict(build_script.os.environ, contamination):
+            environment = build_script._build_environment()
+        self.assertNotIn("unrelated-runtime", environment["PATH"])
+        for name in contamination:
+            if name != "PATH":
+                self.assertNotIn(name, environment)
+
     def test_version_literals_and_frontend_branding(self) -> None:
         self.assertEqual(VERSION, "0.1.0")
         self.assertEqual(APP_NAME, "Texture Viewer")

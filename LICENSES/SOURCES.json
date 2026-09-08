@@ -48,6 +48,18 @@
     "size": 2775
   },
   {
+    "file": "Expat-2.6.3.txt",
+    "url": "https://raw.githubusercontent.com/python/cpython/v3.12.6/Modules/expat/COPYING",
+    "sha256": "122f2c27000472a201d337b9b31f7eb2b52d091b02857061a8880371612d9534",
+    "size": 1144
+  },
+  {
+    "file": "Python-incorporated-notices.txt",
+    "url": "https://raw.githubusercontent.com/python/cpython/v3.12.6/Doc/license.rst",
+    "sha256": "bad93f2d7f71f6729b12cf0080951ace371acaf5e3fd6835118d53cd4bfd9120",
+    "size": 53905
+  },
+  {
     "file": "Python-3.12.6.txt",
     "source": "Official PSF Windows Python 3.12.6 LICENSE.txt",
     "sha256": "e502c6b880ff58d614901495a9009c136539cd0b1e2a2abb8fc00b934c203419",
