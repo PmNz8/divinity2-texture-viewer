@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2026 PmNz8
+# SPDX-License-Identifier: AGPL-3.0-only
+[project]
+name = "divinity2-texture-viewer"
+version = "0.1.0"
+description = "Read-only Divinity II texture viewer and exporter"
+requires-python = ">=3.12,<3.13"
+license = "AGPL-3.0-only"
+authors = [{name = "PmNz8"}]
+dependencies = []
+
+[tool.uv]
+package = false
