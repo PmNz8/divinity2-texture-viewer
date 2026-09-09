@@ -32,14 +32,6 @@ These are earlier-development UI screenshots for orientation, not pixel-exact ca
 
 The screenshots are illustrative documentation, not raw game-asset distribution; copyright in depicted game-derived content remains with the respective rights holders.
 
-## Release and source
-
-Manual GUI, live-filter and three-export checks passed for the candidate r2
-functional build on two Windows computers. This documentation, branding and
-packaging refresh was validated by automated checks; it is not a new manual
-test of the refreshed ZIP. Matching source is `TextureViewer-0.1.0-source.zip`;
-`BUILD_INFO.json` identifies the executable's source commit.
-
 ## License
 
 Copyright (C) 2026 PmNz8. Own code: **AGPL-3.0-only**; see
