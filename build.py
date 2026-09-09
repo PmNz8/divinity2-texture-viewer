@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2026 PmNz8
 # SPDX-License-Identifier: AGPL-3.0-only
-"""Reproducible Windows onedir packaging for Texture Viewer 0.1.0.
+"""Reproducible Windows onedir packaging for Texture Viewer 0.1.1.
 
 This script validates the release inputs and invokes PyInstaller only after the
 candidate is frozen. It deliberately does not install dependencies or remove
@@ -178,7 +178,7 @@ def _resolve_source_revision(root: Path) -> str:
 
 
 def _version_file_text() -> str:
-    return f'''# UTF-8\nVSVersionInfo(\n  ffi=FixedFileInfo(\n    filevers=(0, 1, 0, 0),\n    prodvers=(0, 1, 0, 0),\n    mask=0x3f,\n    flags=0x0,\n    OS=0x40004,\n    fileType=0x1,\n    subtype=0x0,\n    date=(0, 0)\n  ),\n  kids=[\n    StringFileInfo([\n      StringTable(\'040904B0\', [\n        StringStruct(\'CompanyName\', \'PmNz8\'),\n        StringStruct(\'FileDescription\', \'{APP_NAME}\'),\n        StringStruct(\'FileVersion\', \'{VERSION}\'),\n        StringStruct(\'ProductName\', \'{APP_NAME}\'),\n        StringStruct(\'ProductVersion\', \'{VERSION}\'),\n        StringStruct(\'LegalCopyright\', \'© 2026 PmNz8\'),\n      ])\n    ]),\n    VarFileInfo([VarStruct(\'Translation\', [1033, 1200])])\n  ]\n)\n'''
+    return f'''# UTF-8\nVSVersionInfo(\n  ffi=FixedFileInfo(\n    filevers=(0, 1, 1, 0),\n    prodvers=(0, 1, 1, 0),\n    mask=0x3f,\n    flags=0x0,\n    OS=0x40004,\n    fileType=0x1,\n    subtype=0x0,\n    date=(0, 0)\n  ),\n  kids=[\n    StringFileInfo([\n      StringTable(\'040904B0\', [\n        StringStruct(\'CompanyName\', \'PmNz8\'),\n        StringStruct(\'FileDescription\', \'{APP_NAME}\'),\n        StringStruct(\'FileVersion\', \'{VERSION}\'),\n        StringStruct(\'ProductName\', \'{APP_NAME}\'),\n        StringStruct(\'ProductVersion\', \'{VERSION}\'),\n        StringStruct(\'LegalCopyright\', \'© 2026 PmNz8\'),\n      ])\n    ]),\n    VarFileInfo([VarStruct(\'Translation\', [1033, 1200])])\n  ]\n)\n'''
 
 
 def _pyinstaller_command(context: BuildContext, version_file: Path) -> list[str]:

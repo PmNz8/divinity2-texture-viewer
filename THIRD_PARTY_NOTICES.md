@@ -1,4 +1,4 @@
-# Third-party notices — Texture Viewer 0.1.0
+# Third-party notices — Texture Viewer 0.1.1
 
 The product's AGPL-3.0-only license covers its own source, not the following
 independently licensed runtime components. Required notices are supplied

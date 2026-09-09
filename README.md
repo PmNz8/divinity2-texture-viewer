@@ -1,4 +1,4 @@
-# Divinity II Texture Viewer 0.1.0
+# Divinity II Texture Viewer 0.1.1
 
 Experimental Windows x64 release by [PmNz8](https://github.com/PmNz8). This
 read-only viewer/exporter covers Divinity II: Developer's Cut DV2 archives,
@@ -12,11 +12,13 @@ or publisher. No raw game assets are included; screenshots are illustrative docu
 - Filters the live result list by path substring, glob pattern and result limit.
 - Exports a selected view/mip as PNG, a complete texture set, or a Builder Package; source archives are never modified.
 
-The Builder Package is a read-only handoff for the separate, writable DKS Patch Builder, maintained separately and not yet published.
+Export a Builder Package to prepare textures for the companion
+[DKS Patch Builder](https://github.com/PmNz8/divinity2-dks-patch-builder),
+which compiles texture changes into a separate `DKS_Patch.dv2` archive.
 
 ## Quick start
 
-1. Download the [0.1.0 release](https://github.com/PmNz8/divinity2-texture-viewer/releases/tag/v0.1.0), extract the entire ZIP to a writable local folder, and launch `TextureViewer.exe`.
+1. Download the [0.1.1 release](https://github.com/PmNz8/divinity2-texture-viewer/releases/tag/v0.1.1), extract the entire ZIP to a writable local folder, and launch `TextureViewer.exe`.
 2. Open a DV2 archive, let the compatibility scan finish, filter or open a texture, then choose one of the three export actions.
 
 Keep `_internal`, `LICENSES`, `docs/images` and the accompanying files together;
@@ -25,7 +27,7 @@ See [USAGE.md](USAGE.md) for workflow, limits and diagnostics; see [BUILD.md](BU
 
 ## Earlier development screenshots
 
-These are earlier-development UI screenshots for orientation, not pixel-exact captures of the current 0.1.0 release; the second image is composite, not a normal-map view.
+These are earlier-development UI screenshots for orientation, not pixel-exact captures of the current 0.1.1 release; the second image is composite, not a normal-map view.
 
 ![Diffuse preview](docs/images/diffuse-preview.png)
 ![Composite preview](docs/images/composite-preview.png)

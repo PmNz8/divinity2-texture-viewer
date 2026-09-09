@@ -32,12 +32,12 @@ class ReleaseEntryTests(unittest.TestCase):
                 self.assertNotIn(name, environment)
 
     def test_version_literals_and_frontend_branding(self) -> None:
-        self.assertEqual(VERSION, "0.1.0")
+        self.assertEqual(VERSION, "0.1.1")
         self.assertEqual(APP_NAME, "Texture Viewer")
         self.assertEqual(COPYRIGHT, "© 2026 PmNz8")
         self.assertEqual(LICENSE_NAME, "AGPL-3.0-only")
         self.assertEqual(PROFILE_URL, "https://github.com/PmNz8")
-        self.assertIn("0.1.0", WINDOW_TITLE)
+        self.assertIn("0.1.1", WINDOW_TITLE)
         self.assertNotIn("candidate", WINDOW_TITLE)
         self.assertIn(COPYRIGHT, FOOTER_TEXT)
         self.assertIn("AGPL", FOOTER_TEXT)
@@ -53,7 +53,7 @@ class ReleaseEntryTests(unittest.TestCase):
         stream = io.StringIO()
         with mock.patch.object(sys, "stdout", stream):
             self.assertEqual(cli.main(["--version"]), 0)
-        self.assertIn("0.1.0", stream.getvalue())
+        self.assertIn("0.1.1", stream.getvalue())
 
     def test_check_imports_runtime_without_calling_gui(self) -> None:
         fake_tk = type("FakeTk", (), {"TkVersion": "test-tk"})

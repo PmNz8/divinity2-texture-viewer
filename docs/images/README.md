@@ -1,7 +1,7 @@
 # Documentation screenshots
 
 These PNGs are earlier-development UI screenshots retained for documentation,
-not pixel-exact captures of the current 0.1.0 release:
+not pixel-exact captures of the current 0.1.1 release:
 
 - `diffuse-preview.png` — earlier diffuse/RGB preview example.
 - `composite-preview.png` — earlier composite preview example; this is **not** a

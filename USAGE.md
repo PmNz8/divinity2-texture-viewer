@@ -34,7 +34,8 @@ The three export actions are:
 - **Export PNG** writes the selected view/mip to a new `.png` file.
 - **Export Set** writes the complete selected texture set.
 - **Export Builder Package** writes a handoff package for the separate writable
-  DKS Patch Builder, which is maintained separately and not yet published.
+  [DKS Patch Builder](https://github.com/PmNz8/divinity2-dks-patch-builder),
+  which compiles texture changes into a `DKS_Patch.dv2` archive.
 
 For the set and Builder Package actions, choose an existing parent folder. The
 viewer creates a new `<texture>-export` or `<texture>-package` child. Existing
@@ -86,4 +87,4 @@ Manual GUI, filtering and three-export checks passed for the candidate r2
 functional build on two Windows computers. This documentation, branding and
 packaging refresh was validated by automated checks; it is not a new manual
 test of the refreshed ZIP. The tested scope does not cover every archive layout,
-hostile input or future DKS Patch Builder workflow.
+hostile input or every DKS Patch Builder workflow.

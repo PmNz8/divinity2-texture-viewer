@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 [project]
 name = "divinity2-texture-viewer"
-version = "0.1.0"
+version = "0.1.1"
 description = "Read-only Divinity II texture viewer and exporter"
 requires-python = ">=3.12,<3.13"
 license = "AGPL-3.0-only"

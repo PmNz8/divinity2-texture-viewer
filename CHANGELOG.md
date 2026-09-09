@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1 — experimental release
+
+- Updated release metadata and companion-tool documentation.
+- Added direct links to DKS Patch Builder.
+- No changes to texture decoding, filtering or export behavior.
+
 ## 0.1.0 — experimental release
 
 - Standalone Tkinter frontend without terrain viewer, WebView or .NET.
