@@ -15,14 +15,14 @@ from typing import Any, Callable
 from .controller import TextureViewerController
 from .version import APP_NAME, COPYRIGHT, LICENSE_NAME, PROFILE_URL, VERSION
 
-WINDOW_TITLE = f"{APP_NAME} {VERSION} candidate"
+WINDOW_TITLE = f"Divinity II {APP_NAME} {VERSION}"
 FOOTER_TEXT = f"{COPYRIGHT} · AGPLv3 ({LICENSE_NAME}) · No warranty"
 ABOUT_TEXT = (
-    f"{APP_NAME} {VERSION} candidate\n\n"
+    f"Divinity II {APP_NAME} {VERSION}\n\n"
     f"{COPYRIGHT}\n"
     f"Licensed under GNU AGPL-3.0-only. Redistribution is permitted only under "
-    "the license terms. The corresponding source, LICENSE, and third-party "
-    "notices are distributed beside the executable.\n\n"
+    "the license terms. LICENSE and third-party notices are beside the executable. "
+    "The matching source ZIP is available alongside the release download.\n\n"
     "No warranty is provided; use the tool and exported files at your own risk."
 )
 

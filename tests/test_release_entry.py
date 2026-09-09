@@ -38,7 +38,7 @@ class ReleaseEntryTests(unittest.TestCase):
         self.assertEqual(LICENSE_NAME, "AGPL-3.0-only")
         self.assertEqual(PROFILE_URL, "https://github.com/PmNz8")
         self.assertIn("0.1.0", WINDOW_TITLE)
-        self.assertIn("candidate", WINDOW_TITLE)
+        self.assertNotIn("candidate", WINDOW_TITLE)
         self.assertIn(COPYRIGHT, FOOTER_TEXT)
         self.assertIn("AGPL", FOOTER_TEXT)
         self.assertIn("No warranty", FOOTER_TEXT)

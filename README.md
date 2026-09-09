@@ -1,91 +1,51 @@
 # Divinity II Texture Viewer 0.1.0
 
-Experimental release candidate by [PmNz8](https://github.com/PmNz8).
-Read-only texture viewer/exporter for Divinity II: Developer's Cut DV2 archives,
-including compatible mod archives. Not affiliated with or endorsed by the game
-developer/publisher. No game files are included.
+Experimental Windows x64 release by [PmNz8](https://github.com/PmNz8). This
+read-only viewer/exporter covers Divinity II: Developer's Cut DV2 archives,
+including compatible mod archives; it is not affiliated with the game developer
+or publisher. No raw game assets are included; screenshots are illustrative documentation.
 
-## Uruchomienie / launch
+## What it does
 
-Windows 10/11, x64. Extract the **entire** portable ZIP into a writable local
-folder, then double-click `TextureViewer.exe`. Keep `_internal`, `LICENSES` and
-the accompanying files together. Do not run directly inside the ZIP.
-Python, UV, Node.js, .NET and WebView2 do not need to be installed by the user.
-The candidate is unsigned; Windows may show a reputation/security warning.
-Do not disable system protection globally. The final second-PC test is pending.
+- Finds supported standalone BC1, BC2 and BC3 texture wrappers in a DV2 archive.
+- Shows existing mip levels at 1:1, with RGB, alpha and composite views.
+- Filters the live result list by path substring, glob pattern and result limit.
+- Exports a selected view/mip as PNG, a complete texture set, or a Builder Package; source archives are never modified.
 
-## Use
+The Builder Package is a read-only handoff for the separate, writable DKS Patch Builder, maintained separately and not yet published.
 
-1. **Open DV2** selects any structurally supported archive. A background scan
-   examines `.nif` contents; progress shows processed/total and compatible count.
-   Only supported standalone BC1/BC2/BC3 textures are listed, not models or items.
-2. **Substring** matches part of a path; **Glob pattern** accepts `*` and `?`;
-   **Limit** caps the number of results. Empty fields impose no user filter.
-   Filtering is live; **Reset** clears all three fields, not compatibility checks.
-3. Double-click a row to decode its preview. Select an existing mip and RGB,
-   alpha or composite. Preview is always **1:1**, with scrollbars and no zoom.
-4. **Export PNG** writes the selected view/mip to a new `.png` file.
-   **Export Set** and **Export Builder Package** ask for an existing parent
-   folder, then create a new `<texture>-export` or `<texture>-package` child.
-   Existing destinations are refused; choose a different parent or move your
-   earlier export yourself. Source archives are never modified by GUI actions.
-5. **Info** reads archive information and computes its hash; large files may
-   take time. Closing waits for the current operation to finish.
+## Quick start
 
-Keep exports outside game directories. Reparse/symlink destinations, existing
-paths and the opened archive's `Packed` tree are rejected. This is not a sandbox
-against hostile concurrent filesystem changes. Use trusted local files/folders.
-The profile link is the only network-facing action, opened by an explicit click
-in the system browser. There is no telemetry, updater, runtime downloader or
-game installation action.
+1. Download the [0.1.0 release](https://github.com/PmNz8/divinity2-texture-viewer/releases/tag/v0.1.0), extract the entire ZIP to a writable local folder, and launch `TextureViewer.exe`.
+2. Open a DV2 archive, let the compatibility scan finish, filter or open a texture, then choose one of the three export actions.
 
-## Scope and limitations
+Keep `_internal`, `LICENSES`, `docs/images` and the accompanying files together;
+do not run directly inside the ZIP. Python, UV, Node.js, .NET and WebView2 are not required.
+See [USAGE.md](USAGE.md) for workflow, limits and diagnostics; see [BUILD.md](BUILD.md) for a source build.
 
-- Supported standalone NIF wrapper layouts only; embedded textures, models and
-  arbitrary NIF layouts are excluded. A structural scan is not a game-runtime
-  guarantee; decoding can still fail and is reported without inventing a preview.
-- Archive-internal paths use the canonical DV2 backslash separator. Noncanonical
-  forward-slash paths are outside this candidate's tested support and may be
-  rejected by the compatibility scan.
-- Existing mip levels only; no mip generation, import, editing or save-to-DV2 UI.
-- Archive payload and codec size limits remain. Huge valid images/exports can
-  consume significant memory/CPU; native 1:1 display may fail if resources are
-  exhausted. No automatic shrinking is performed.
-- Scan results live only for the current open archive. Reopen after external
-  changes; do not modify an archive while it is open in the viewer.
-- This is a hobby tool, not security-hardened for hostile archives. It embeds
-  Python 3.12.6 / Tcl-Tk 8.6.13, the tested development runtime, not a claim of
-  latest security maintenance. A runtime upgrade requires another tested build.
-- Automated synthetic tests are not final GUI/second-computer acceptance.
+## Earlier development screenshots
 
-## Diagnostics and manual candidate check
+These are earlier-development UI screenshots for orientation, not pixel-exact captures of the current 0.1.0 release; the second image is composite, not a normal-map view.
 
-From PowerShell, a non-GUI import check can write a **new** report file:
+![Diffuse preview](docs/images/diffuse-preview.png)
+![Composite preview](docs/images/composite-preview.png)
 
-```powershell
-.\TextureViewer.exe check --report .\check-result.json
-```
+The screenshots are illustrative documentation, not raw game-asset distribution; copyright in depicted game-derived content remains with the respective rights holders.
 
-This does not verify a working Tk window. For the manual acceptance, test
-opening mixed DV2s, scan progress, live filters/Reset, double-click, all views
-and representative mips, 1:1 scrolling, each export, cancellation, failed
-operations and archive switching. Check About/license and the profile link.
-Repeat from the extracted ZIP on a second Windows computer without development
-tools. Report the ZIP SHA-256 and any failure; do not send game files, saves or
-private paths by default. Candidate changes require new hashes and retesting.
+## Release and source
 
-## License and source
+Manual GUI, live-filter and three-export checks passed for the candidate r2
+functional build on two Windows computers. This documentation, branding and
+packaging refresh was validated by automated checks; it is not a new manual
+test of the refreshed ZIP. Matching source is `TextureViewer-0.1.0-source.zip`;
+`BUILD_INFO.json` identifies the executable's source commit.
 
-Copyright (C) 2026 PmNz8. Own application code: **AGPL-3.0-only**.
-This program comes with **ABSOLUTELY NO WARRANTY**. You may redistribute and
-modify it under GNU AGPL version 3; see `LICENSE`.
-Third-party components retain their own terms: see `THIRD_PARTY_NOTICES.md`
-and `LICENSES`. The license does not grant rights to game assets you export.
+## License
 
-The matching source archive is `TextureViewer-0.1.0-source.zip`, supplied
-alongside the runtime candidate. It includes tests and `BUILD.md`; tests are
-not included in the runtime ZIP. `BUILD_INFO.json` identifies the source commit
-used for the executable; compare it with source `SOURCE_REVISION`.
+Copyright (C) 2026 PmNz8. Own code: **AGPL-3.0-only**; see
+[`LICENSE`](LICENSE), [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) and
+[`LICENSES`](LICENSES). This program comes with **ABSOLUTELY NO WARRANTY**.
+The license does not grant rights to game assets you export.
 
 ### Licensing of exported content
 

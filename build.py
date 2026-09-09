@@ -48,7 +48,15 @@ EXCLUDED_MODULES = (
     "terrain_viewer",
     "dks_patch_builder",
 )
-PUBLIC_FILES = ("README.md", "LICENSE", "THIRD_PARTY_NOTICES.md")
+PUBLIC_FILES = (
+    "README.md",
+    "USAGE.md",
+    "BUILD.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
+)
+PUBLIC_DOCS_DIR = "docs/images"
+PUBLIC_DOC_FILES = ("README.md", "diffuse-preview.png", "composite-preview.png")
 BUILD_INFO_NAME = "BUILD_INFO.json"
 MANIFEST_NAME = "MANIFEST.json"
 _REVISION_RE = re.compile(r"^[0-9a-fA-F]{40}$")
@@ -206,6 +214,10 @@ def _copy_public_release_files(root: Path, bundle: Path) -> None:
     for name in PUBLIC_FILES:
         source = root / name
         shutil.copy2(source, bundle / name)
+    destination_docs = bundle / PUBLIC_DOCS_DIR
+    destination_docs.mkdir(parents=True, exist_ok=False)
+    for name in PUBLIC_DOC_FILES:
+        shutil.copy2(root / PUBLIC_DOCS_DIR / name, destination_docs / name)
     licenses = root / "LICENSES"
     shutil.copytree(licenses, bundle / "LICENSES")
 
@@ -218,6 +230,13 @@ def _validate_public_release_files(root: Path) -> None:
     licenses = root / "LICENSES"
     if not licenses.is_dir():
         raise BuildError(f"missing public license directory: {licenses}")
+    docs = root / PUBLIC_DOCS_DIR
+    if not docs.is_dir():
+        raise BuildError(f"missing public documentation image directory: {docs}")
+    for name in PUBLIC_DOC_FILES:
+        source = docs / name
+        if not source.is_file():
+            raise BuildError(f"missing public documentation image file: {source}")
 
 
 def _file_manifest(root: Path, *, exclude: Iterable[str] = ()) -> list[dict[str, object]]:
