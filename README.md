@@ -5,6 +5,10 @@ read-only viewer/exporter covers Divinity II: Developer's Cut DV2 archives,
 including compatible mod archives; it is not affiliated with the game developer
 or publisher. No raw game assets are included; screenshots are illustrative documentation.
 
+Developed and tested exclusively with the **GOG edition of Divinity II:
+Developer's Cut**. Compatibility with other editions or storefront versions
+has not been verified.
+
 ## What it does
 
 - Finds supported standalone BC1, BC2 and BC3 texture wrappers in a DV2 archive.
