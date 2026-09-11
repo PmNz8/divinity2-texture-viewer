@@ -70,6 +70,7 @@ def _check_payload() -> dict[str, object]:
     import tkinter
 
     from .desktop import run_gui as desktop_run_gui
+    from .codec import mip_generation  # Include the lazy v2 compiler in runtime diagnostics.
 
     modules = _module_list()
     return {
