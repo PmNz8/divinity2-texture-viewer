@@ -171,11 +171,16 @@ class TextureViewerController:
         return self._call(operation)
 
     def export_asset_package(
-        self, output_directory: str | None = None
+        self, output_directory: str | None = None, *, mip_mode="all", mip_profile="raw"
     ) -> dict[str, object]:
         return self._call(
-            lambda: self._export_asset_package(output_directory=output_directory)
+            lambda: self._export_asset_package(output_directory=output_directory,
+                mip_mode=mip_mode, mip_profile=mip_profile)
         )
+
+    def export_asset_packages(self, output_directory, **options):
+        return self._call(lambda: {"ok": True, "batch":
+            self.model.export_asset_packages(output_directory, **options)})
 
     def export_asset_package_dialog(self) -> dict[str, object]:
         if self._choose_package_directory is None:
@@ -347,11 +352,12 @@ class TextureViewerController:
         }
 
     def _export_asset_package(
-        self, *, output_directory: str | None
+        self, *, output_directory: str | None, mip_mode="all", mip_profile="raw"
     ) -> dict[str, object]:
         if output_directory in (None, ""):
             raise TextureViewerError("asset-package directory is required")
-        destination = self.model.export_asset_package(output_directory)
+        destination = self.model.export_asset_package(output_directory,
+            mip_mode=mip_mode, mip_profile=mip_profile)
         names = sorted(
             str(path.relative_to(destination)).replace("\\", "/")
             for path in destination.rglob("*")

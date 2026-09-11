@@ -49,6 +49,41 @@ files/folders. The Builder Package is a read-only handoff; assembling or
 writing a modified DV2 is outside this viewer and belongs to the separate DKS
 Patch Builder.
 
+## Batch and MIP0 packages (0.1.2)
+
+Set **Builder package mip policy** before a single or batch package export:
+
+- **All mips (original)** keeps the v1 contract: edit each desired mip separately.
+- **MIP0 / raw channels** exports only base PNGs and marks the package for area
+  filtering of independent 8-bit channels. No gamma or vector interpretation.
+- **MIP0 / sRGB + opacity** is for colour with opacity: lower mips are area
+  filtered in linear light with premultiplied alpha, then stored as sRGB.
+
+Use **Batch: all textures** for all recognized textures in the opened archive,
+or **Batch: filtered textures** for the current substring/glob/limit.
+No preview selection is necessary. Choose a parent outside the game installation.
+A new timestamped folder contains independent packages named with an ordinal,
+readable texture stem and logical-path hash. Same basenames do not collide.
+The root **batch-report.json** maps every attempted texture to its package and
+exported/skipped/error result. Packages are committed individually; **Stop batch
+after current texture** retains completed packages and writes a partial report.
+Close requests the same stop and waits for the current texture. No overwrite.
+
+MIP0 packages require Builder 0.1.2 or newer. Only BC1/BC3 conventional halving
+chains are supported; BC2 is skipped in this mode. The original format,
+dimensions, mip count and template stay fixed. Only the base RGB and required
+alpha PNGs need editing. Unchanged base pixels preserve ALL original NIF bytes;
+changed pixels regenerate every existing lower mip in the Builder.
+Plain **Export Set** remains full-mip v1, regardless of this package policy.
+
+Choose profiles explicitly; filenames are not used to guess texture semantics.
+Do not use sRGB for normals or packed material data. Raw filtering does not
+renormalize normals; neither profile preserves alpha-test coverage, performs
+edge wrapping, resizes the base or promises game-equivalent mip quality.
+Use the full-mip workflow for custom normals, cutouts or specialized filtering.
+Process textures in manageable batches: work is sequential, but one large
+texture can take time and the destination needs space for templates and PNGs.
+
 ## Scope and limits
 
 - Supported standalone NIF wrapper layouts only; embedded textures, models and
@@ -58,8 +93,8 @@ Patch Builder.
 - Archive-internal paths use the canonical DV2 backslash separator.
   Noncanonical forward-slash paths are outside the tested support and may be
   rejected by the compatibility scan.
-- Existing mip levels only; there is no mip generation, import, editing or
-  save-to-DV2 UI.
+- Preview uses existing mip levels. MIP0 packages request lower-mip generation
+  in the Builder; there is no import, editing or save-to-DV2 UI in the Viewer.
 - Archive payload and codec size limits remain. Huge valid images/exports can
   consume significant memory/CPU; native 1:1 display can fail if resources are
   exhausted. No automatic shrinking is performed.

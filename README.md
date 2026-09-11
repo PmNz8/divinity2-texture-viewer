@@ -1,4 +1,4 @@
-# Divinity II Texture Viewer 0.1.1
+# Divinity II Texture Viewer 0.1.2
 
 Experimental Windows x64 release by [PmNz8](https://github.com/PmNz8). This
 read-only viewer/exporter covers Divinity II: Developer's Cut DV2 archives,
@@ -15,6 +15,7 @@ has not been verified.
 - Shows existing mip levels at 1:1, with RGB, alpha and composite views.
 - Filters the live result list by path substring, glob pattern and result limit.
 - Exports a selected view/mip as PNG, a complete texture set, or a Builder Package; source archives are never modified.
+- Batch-exports all or filtered textures as separate Builder Packages, with optional MIP0-only editing.
 
 Export a Builder Package to prepare textures for the companion
 [DKS Patch Builder](https://github.com/PmNz8/divinity2-dks-patch-builder),
@@ -22,8 +23,8 @@ which compiles texture changes into a separate `DKS_Patch.dv2` archive.
 
 ## Quick start
 
-1. Download the [0.1.1 release](https://github.com/PmNz8/divinity2-texture-viewer/releases/tag/v0.1.1), extract the entire ZIP to a writable local folder, and launch `TextureViewer.exe`.
-2. Open a DV2 archive, let the compatibility scan finish, filter or open a texture, then choose one of the three export actions.
+1. Extract the entire matching Windows ZIP to a writable local folder and launch `TextureViewer.exe`.
+2. Open a DV2 archive, let the compatibility scan finish, then export one texture or a batch. MIP0 packages require Builder 0.1.2 or newer.
 
 Keep `_internal`, `LICENSES`, `docs/images` and the accompanying files together;
 do not run directly inside the ZIP. Python, UV, Node.js, .NET and WebView2 are not required.

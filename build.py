@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2026 PmNz8
 # SPDX-License-Identifier: AGPL-3.0-only
-"""Reproducible Windows onedir packaging for Texture Viewer 0.1.1.
+"""Reproducible Windows onedir packaging for Texture Viewer.
 
 This script validates the release inputs and invokes PyInstaller only after the
 candidate is frozen. It deliberately does not install dependencies or remove

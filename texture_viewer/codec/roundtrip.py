@@ -8,9 +8,9 @@ parsed :class:`~texture_viewer.codec.nif_texture.TextureResource`, receives an
 in-memory export set, and can optionally import edited PNGs back into the
 fixed-size mip ranges of that same resource.
 
-No mip generation, resampling, semantic colour interpretation, or BC2
-encoding is performed here.  Every existing mip is handled independently and
-the source wrapper is revalidated before it is used.
+V1 handles every existing mip independently. V2 delegates explicit base-only
+generation to mip_generation, without widening the source wrapper boundaries.
+BC2 encoding remains unsupported.
 """
 
 from __future__ import annotations
@@ -507,8 +507,19 @@ def import_export_set(
 ) -> bytes:
     """Validate a complete export set and serialize only changed mip ranges."""
 
-    source, views, manifest = _prepare_resource(resource)
     normalized = _normalize_files(files)
+    # V2 is a separate, exact source-bound contract. V1 remains unchanged.
+    raw_sidecar = normalized.get(SIDECAR_NAME, b"")
+    if len(raw_sidecar) > MAX_SIDECAR_BYTES:
+        raise TextureRoundTripError("sidecar exceeds the supported size limit")
+    try:
+        version = json.loads(raw_sidecar).get("schema_version")
+    except (ValueError, AttributeError, UnicodeDecodeError):
+        version = None
+    if type(version) is int and version == 2:
+        from .mip_generation import import_base_export_set
+        return import_base_export_set(resource, normalized)
+    source, views, manifest = _prepare_resource(resource)
     expected_files = {
         SIDECAR_NAME,
         *(f"mip-{view.index:02d}.rgb.png" for view in views),
@@ -742,9 +753,7 @@ def import_texture_set(
             raise
         except OSError as error:
             raise TextureRoundTripError(f"cannot read input file: {entry.name}") from error
-    if set(files) != expected_files:
-        missing = sorted(expected_files - set(files))
-        raise TextureRoundTripError(f"input directory is missing files: {missing!r}")
+    # The selected contract checks completeness; v2 intentionally omits lower PNGs.
     return import_export_set(resource, files)
 
 

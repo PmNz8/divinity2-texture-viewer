@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.2 — local experimental candidate
+
+- Batch Builder Package export for all or filtered recognized textures.
+- Explicit MIP0-only BC1/BC3 packages; original mip metadata and template retained.
+- Raw-channel or linear-light sRGB/opacity area-filter policy for Builder generation.
+- Per-package atomic publication, progress, stop-after-current and result report.
+- Full-mip v1 and unchanged BC2 behavior retained; no added dependency or game write.
+
 ## 0.1.1 — experimental release
 
 - Updated release metadata and companion-tool documentation.

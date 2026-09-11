@@ -70,6 +70,8 @@ def build_texture_asset_package_files(
     template_logical_path: str,
     *,
     target_logical_path: str | None = None,
+    mip_mode: str = "all",
+    mip_profile: str = "raw",
 ) -> TexturePackageFiles:
     """Build a complete v1 package in memory without touching any archive."""
 
@@ -82,7 +84,13 @@ def build_texture_asset_package_files(
     )
     try:
         template_payload = serialize_texture_resource(resource)
-        texture_files = build_export_set(resource)
+        if mip_mode == "all":
+            texture_files = build_export_set(resource)
+        elif mip_mode == "base":
+            from texture_viewer.codec.mip_generation import build_base_export_set
+            texture_files = build_base_export_set(resource, profile=mip_profile)
+        else:
+            raise PackageExportError("mip mode must be all or base")
     except (NIFTextureError, TextureRoundTripError, ValueError) as error:
         raise PackageExportError(f"cannot build texture package: {error}") from error
     template_sha256 = hashlib.sha256(template_payload).hexdigest()

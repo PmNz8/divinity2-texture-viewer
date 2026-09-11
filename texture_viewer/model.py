@@ -14,6 +14,9 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 import os
+import hashlib
+import json
+import re
 from pathlib import Path
 import shutil
 import tempfile
@@ -585,6 +588,9 @@ class TextureViewerModel:
     def export_asset_package(
         self,
         output_directory: str | os.PathLike[str] | Path,
+        *,
+        mip_mode: str = "all",
+        mip_profile: str = "raw",
     ) -> Path:
         """Publish one complete Builder package without changing the archive."""
 
@@ -603,6 +609,8 @@ class TextureViewerModel:
             package = build_texture_asset_package_files(
                 selection.resource,
                 selection.entry.path,
+                mip_mode=mip_mode,
+                mip_profile=mip_profile,
             )
         except PackageExportError as error:
             raise TextureViewerError(f"cannot build asset package: {error}") from error
@@ -637,6 +645,61 @@ class TextureViewerModel:
             if staging is not None:
                 shutil.rmtree(staging, ignore_errors=True)
         return destination
+
+    def export_asset_packages(
+        self, output_directory, *, mip_mode="all", mip_profile="raw",
+        substring=None, glob_pattern=None, limit=None, progress=None, cancelled=None,
+    ):
+        """Export independently committed packages; cancellation retains successes."""
+        self.require_session()
+        if mip_mode not in ("all", "base") or mip_profile not in ("raw", "srgb"):
+            raise TextureViewerError("unsupported mip mode/profile")
+        rows = tuple(row for row in self.list_entries(
+            substring=substring, glob_pattern=glob_pattern, limit=limit,
+            compatible_only=self._compatible_paths is not None,
+        ) if row.nif_hint)
+        destination = _new_destination(
+            output_directory, label="batch directory", extension=None,
+            archive_path=self._archive_path, directory=True,
+        )
+        destination.mkdir()
+        report = {"schema": "divinity2.texture_package_batch", "schema_version": 1,
+                  "archive": str(self._archive_path), "mip_mode": mip_mode,
+                  "mip_profile": mip_profile, "total": len(rows), "cancelled": False,
+                  "items": []}
+        original_selection = self._selection
+        try:
+            for index, row in enumerate(rows):
+                if cancelled is not None and cancelled():
+                    report["cancelled"] = True
+                    break
+                digest = hashlib.sha256(row.path.casefold().encode("utf-8")).hexdigest()[:20]
+                stem = row.path.replace("\\", "/").rsplit("/", 1)[-1].rsplit(".", 1)[0]
+                stem = re.sub(r"[^A-Za-z0-9._-]", "_", stem)[:64] or "texture"
+                package_name = f"{index + 1:05d}-{stem}-{digest}"
+                item = {"logical_path": row.path, "package": package_name}
+                try:
+                    selection = self.open_texture(row.path)
+                    if mip_mode == "base" and selection.resource.pixel_format == bc.FORMAT_BC2:
+                        item.update(status="skipped", reason="BC2 is excluded from MIP0 generation")
+                    else:
+                        self.export_asset_package(destination / package_name,
+                            mip_mode=mip_mode, mip_profile=mip_profile)
+                        item["status"] = "exported"
+                except TextureViewerError as error:
+                    item.update(status="error", reason=str(error))
+                report["items"].append(item)
+                if progress is not None:
+                    progress({"processed": index + 1, "total": len(rows), "path": row.path})
+        finally:
+            self._selection = original_selection
+            # This report lives outside individual strict Builder packages.
+            with (destination / "batch-report.json").open("x", encoding="utf-8") as stream:
+                json.dump(report, stream, ensure_ascii=False, indent=2)
+                stream.write("\n")
+                stream.flush()
+                os.fsync(stream.fileno())
+        return {**report, "output_directory": str(destination)}
 
 
 def _validate_mip_index_value(mip_index: int) -> None:

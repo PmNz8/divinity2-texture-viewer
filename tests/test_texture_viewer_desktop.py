@@ -318,9 +318,12 @@ class TextureViewerDesktopTests(unittest.TestCase):
         app.choose_set_export()
         app._submit.call_args.args[0]()
         app.controller.export_set.assert_called_once_with(str(Path("exports") / "Loaded-export"))
+        app.package_mode_var = mock.Mock()
+        app.package_mode_var.get.return_value = "All mips (original)"
         app.choose_package_export()
         app._submit.call_args.args[0]()
-        app.controller.export_asset_package.assert_called_once_with(str(Path("exports") / "Loaded-package"))
+        app.controller.export_asset_package.assert_called_once_with(
+            str(Path("exports") / "Loaded-package"), mip_mode="all", mip_profile="raw")
         app.active_texture = None
         app.filedialog.reset_mock()
         app.choose_package_export()

@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 from pathlib import PureWindowsPath
 from queue import Empty, Full, Queue
+from threading import Event
 import webbrowser
 from typing import Any, Callable
 
@@ -132,6 +133,9 @@ class TextureViewerTkApp:
         self._scan_progress: Queue[dict[str, object]] = Queue(maxsize=1)
         self._scan_running = False
         self.scan_summary: dict[str, object] | None = None
+        self._batch_cancel = Event()
+        self._batch_progress = Queue(maxsize=1)
+        self._batch_running = False
 
         self.filter_substring = tk_module.StringVar(value="")
         self.filter_glob = tk_module.StringVar(value="")
@@ -140,6 +144,7 @@ class TextureViewerTkApp:
         self.active_texture_var = tk_module.StringVar(value="")
         self.mip_var = tk_module.StringVar(value="")
         self.view_var = tk_module.StringVar(value="composite")
+        self.package_mode_var = tk_module.StringVar(value="All mips (original)")
         self.status_var = tk_module.StringVar(value="No archive open")
         self._filter_trace_tokens = [
             self.filter_substring.trace_add("write", self._on_filter_variable_changed),
@@ -284,6 +289,21 @@ class TextureViewerTkApp:
             self.choose_package_export,
             "export_package",
         ).pack(fill="x", pady=2)
+
+        self.ttk.Label(texture_frame, text="Builder package mip policy").pack(fill="x", pady=(6, 0))
+        self.package_mode_combo = self.ttk.Combobox(texture_frame,
+            textvariable=self.package_mode_var, state="readonly",
+            values=("All mips (original)", "MIP0 / raw channels", "MIP0 / sRGB + opacity"))
+        self.package_mode_combo.pack(fill="x")
+        self._register_busy(self.package_mode_combo, "readonly")
+        self._button(texture_frame, "Batch: all textures",
+            lambda: self.choose_batch_export(filtered=False), "export_batch_all").pack(fill="x", pady=2)
+        self._button(texture_frame, "Batch: filtered textures",
+            lambda: self.choose_batch_export(filtered=True), "export_batch_filtered").pack(fill="x", pady=2)
+        # Cancellation must remain reachable while other controls are disabled.
+        self.batch_cancel_button = self.ttk.Button(texture_frame,
+            text="Stop batch after current texture", command=self._batch_cancel.set)
+        self.batch_cancel_button.pack(fill="x", pady=2)
 
         preview_frame = self.ttk.LabelFrame(
             right, text="Preview", style="Viewer.TLabelframe", padding=4
@@ -453,6 +473,7 @@ class TextureViewerTkApp:
 
     def _poll_future(self, callback: Callable[[dict[str, object]], None]) -> None:
         self._show_scan_progress()
+        self._show_batch_progress()
         future = self.future
         if future is None:
             return
@@ -474,6 +495,8 @@ class TextureViewerTkApp:
         if self.closed:
             return
         self.closing = True
+        if hasattr(self, "_batch_cancel"):
+            self._batch_cancel.set()
         filter_after_id = getattr(self, "_filter_after_id", None)
         if filter_after_id is not None:
             try:
@@ -821,10 +844,78 @@ class TextureViewerTkApp:
     def choose_package_export(self) -> None:
         destination = self._choose_export_directory("package")
         if destination:
+            mode, profile = self._package_policy()
             self._submit(
-                lambda: self.controller.export_asset_package(destination),
+                lambda: self.controller.export_asset_package(destination,
+                    mip_mode=mode, mip_profile=profile),
                 self._on_export_result,
             )
+
+    def _package_policy(self):
+        value = self.package_mode_var.get()
+        if value == "All mips (original)":
+            return "all", "raw"
+        return "base", "srgb" if value == "MIP0 / sRGB + opacity" else "raw"
+
+    def choose_batch_export(self, *, filtered):
+        if self.future is not None or self.closing or self.archive_document is None:
+            return
+        try:
+            parent = self.filedialog.askdirectory(parent=self.root, title="Choose parent for a NEW batch folder")
+            if not parent:
+                return
+            # Unique new sibling; never reuse or overwrite an earlier batch.
+            from datetime import datetime
+            destination = str(Path(parent) / ("texture-batch-" + datetime.now().strftime("%Y%m%d-%H%M%S-%f")))
+            options = {}
+            if filtered:
+                options = {"substring": self.filter_substring.get(),
+                           "glob_pattern": self.filter_glob.get() or None,
+                           "limit": _parse_limit(self.filter_limit.get())}
+            mode, profile = self._package_policy()
+        except Exception as error:
+            self._set_status(str(error), error=True)
+            return
+        self._batch_cancel.clear()
+        self._batch_running = True
+        self._set_status("Exporting batch; completed packages are retained if stopped")
+        self._submit(lambda: self.controller.export_asset_packages(destination,
+            mip_mode=mode, mip_profile=profile, **options,
+            progress=self._queue_batch_progress, cancelled=self._batch_cancel.is_set),
+            self._on_batch_export)
+
+    def _queue_batch_progress(self, progress):
+        try:
+            self._batch_progress.put_nowait(progress)
+        except Full:
+            try:
+                self._batch_progress.get_nowait()
+            except Empty:
+                pass
+            self._batch_progress.put_nowait(progress)
+
+    def _show_batch_progress(self):
+        mailbox = getattr(self, "_batch_progress", None)
+        if mailbox is None:
+            return
+        try:
+            progress = mailbox.get_nowait()
+        except Empty:
+            return
+        if not self.closing:
+            self._set_status(f"Exporting {progress['processed']}/{progress['total']} · {progress['path']}")
+
+    def _on_batch_export(self, result):
+        self._batch_running = False
+        if not self._handle_failure(result):
+            return
+        report = result["batch"]
+        counts = {status: sum(item["status"] == status for item in report["items"])
+                  for status in ("exported", "skipped", "error")}
+        self._set_metadata(report)
+        self._set_status(f"Batch {'stopped' if report['cancelled'] else 'finished'}: "
+            f"{counts['exported']} exported, {counts['skipped']} skipped, {counts['error']} errors. "
+            f"Report: {report['output_directory']}")
 
     def _on_export_result(self, result: dict[str, object]) -> None:
         if self._handle_failure(result):
